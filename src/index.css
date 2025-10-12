@@ -1,0 +1,38 @@
+:root {
+  font-family: 'Noto Sans JP', sans-serif;
+  line-height: 1.7;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* CSS変数でカラーパレットを管理 - 北欧ナチュラル */
+  --bg-base: #FAF7F2;
+  --container-bg: #FFFFFF;
+  --accent-green: #9BBF9E;
+  --accent-green-hover: #91B89C;
+  --accent-beige: #E7D8C9;
+  --status-not-started: #DCDAD6;
+  --status-in-progress: #A7C7A9;
+  --status-completed: #BFD8BD;
+  --text-primary: #3E3E3E;
+  --text-secondary: #6B6B6B;
+  --border-subtle: #E9E5DF;
+  --border-light: #E0E0E0;
+  --card-bg: #FFFFFF;
+  --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+}
