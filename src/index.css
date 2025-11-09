@@ -346,3 +346,98 @@
   box-shadow: var(--shadow-soft);
   border-color: var(--color-leaf-400);
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  /* Larger touch targets for mobile */
+  .btn-primary,
+  .btn-secondary,
+  .btn-filter {
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+  }
+
+  /* Smaller font sizes for mobile */
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  /* Mobile-friendly inputs */
+  .input-field,
+  .textarea-field {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  /* Horizontal scroll for kanban on mobile */
+  .kanban-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .kanban-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Stack buttons vertically on mobile */
+  .mobile-stack {
+    flex-direction: column;
+  }
+
+  /* Full width cards on mobile */
+  .card,
+  .card-compact {
+    width: 100%;
+  }
+
+  /* Adjust drawer width on mobile */
+  .drawer {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* FAB positioning on mobile */
+  .fab {
+    bottom: 1rem;
+    right: 1rem;
+    width: 3rem;
+    height: 3rem;
+  }
+
+  /* Reduce padding on mobile */
+  .mobile-padding {
+    padding: 1rem;
+  }
+
+  /* Hide text on small screens */
+  .hide-on-mobile {
+    display: none;
+  }
+
+  /* Show only on mobile */
+  .show-on-mobile {
+    display: block;
+  }
+}
+
+/* Tablet and up */
+@media (min-width: 769px) {
+  .show-on-mobile {
+    display: none;
+  }
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}

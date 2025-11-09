@@ -112,6 +112,19 @@ function App() {
     }
   }, [tasks])
 
+  // 金曜日チェック（週次サマリー表示）
+  useEffect(() => {
+    const today = new Date().getDay()
+    if (today === 5) { // 金曜日
+      const lastShown = localStorage.getItem('last-summary-shown')
+      const todayStr = getTodayStr()
+      if (lastShown !== todayStr) {
+        setShowSummary(true)
+        localStorage.setItem('last-summary-shown', todayStr)
+      }
+    }
+  }, [])
+
   // タスク追加
   const addTask = () => {
     if (newTaskTitle.trim()) {
@@ -320,47 +333,36 @@ function App() {
   return (
     <div className="min-h-screen bg-sand-100">
       {/* ヘッダー */}
-      <header className="bg-white border-b border-sand-300 relative">
-        {/* 雲キャラクター - 右上に配置 */}
-        <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10">
-          <img
-            src="/cloud-mascot.png"
-            alt="予定を詰めすぎると、空が曇っちゃうよ"
-            className="w-24 sm:w-32 md:w-40 h-auto drop-shadow-md hover:scale-110 transition-transform duration-300"
-          />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
-          <div className="flex items-center justify-between mb-4 sm:mb-6">
-            <div className="min-w-0 flex-1">
-              <h1 className="text-xl sm:text-3xl font-bold text-slate-900 tracking-tight truncate">My Weekly Flow</h1>
-              <p className="text-slate-600 text-xs sm:text-sm mt-1 truncate">週次タスクボード - ドラッグ&ドロップで自由に管理</p>
+      <header className="bg-white border-b border-sand-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900 tracking-tight">My Weekly Flow</h1>
+              <p className="text-slate-600 text-sm mt-1">週次タスクボード - ドラッグ&ドロップで自由に管理</p>
             </div>
-            <div className="flex items-center gap-2 sm:gap-3 ml-2 mr-20 sm:mr-28 md:mr-36">
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowCompletedTasks(!showCompletedTasks)}
-                className="btn-secondary flex items-center gap-1 sm:gap-2 p-2 sm:px-3 sm:py-2"
-                title={showCompletedTasks ? '完了タスク表示' : '完了タスク非表示'}
+                className="btn-secondary flex items-center gap-2"
               >
                 {showCompletedTasks ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                <span className="hide-on-mobile">完了タスク</span>
+                完了タスク {showCompletedTasks ? '表示' : '非表示'}
               </button>
               <button
                 onClick={() => setShowArchivedDrawer(true)}
-                className="btn-secondary flex items-center gap-1 sm:gap-2 p-2 sm:px-3 sm:py-2 relative"
-                title="履歴"
+                className="btn-secondary flex items-center gap-2"
               >
                 <Archive className="w-4 h-4" />
-                <span className="hide-on-mobile">履歴</span>
+                履歴
                 {archivedTasks.length > 0 && (
-                  <span className="absolute -top-1 -right-1 sm:relative sm:top-0 sm:right-0 sm:ml-1 px-1.5 sm:px-2 py-0.5 bg-slate-200 text-slate-700 rounded-full text-xs font-bold">
+                  <span className="ml-1 px-2 py-0.5 bg-slate-200 text-slate-700 rounded-full text-xs font-bold">
                     {archivedTasks.length}
                   </span>
                 )}
               </button>
               <button
                 onClick={() => setShowSummary(true)}
-                className="btn-secondary hidden sm:flex items-center gap-2"
+                className="btn-secondary flex items-center gap-2"
               >
                 <BarChart3 className="w-4 h-4" />
                 週次サマリー
@@ -369,25 +371,25 @@ function App() {
           </div>
 
           {/* ビュー切り替えタブ */}
-          <div className="flex gap-2 sm:gap-3 overflow-x-auto">
+          <div className="flex gap-3">
             <button
               onClick={() => setView('kanban')}
-              className={`btn-filter flex-shrink-0 ${view === 'kanban' ? 'active' : ''}`}
+              className={`btn-filter ${view === 'kanban' ? 'active' : ''}`}
             >
-              <span className="flex items-center gap-1 sm:gap-2">
+              <span className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
-                <span className="text-sm sm:text-base">カンバン</span>
+                カンバンボード
               </span>
             </button>
             <button
               onClick={() => setView('today')}
-              className={`btn-filter flex-shrink-0 ${view === 'today' ? 'active' : ''}`}
+              className={`btn-filter ${view === 'today' ? 'active' : ''}`}
             >
-              <span className="flex items-center gap-1 sm:gap-2">
+              <span className="flex items-center gap-2">
                 <Target className="w-4 h-4" />
-                <span className="text-sm sm:text-base">今日</span>
+                今日のタスク
                 {todayTasks.length > 0 && (
-                  <span className="ml-1 px-1.5 sm:px-2 py-0.5 bg-leaf-500 text-white rounded-full text-xs font-bold">
+                  <span className="ml-1 px-2 py-0.5 bg-leaf-500 text-white rounded-full text-xs font-bold">
                     {todayTasks.length}
                   </span>
                 )}
@@ -397,9 +399,9 @@ function App() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* タスク追加フォーム */}
-        <section className="card p-4 sm:p-6 mb-4 sm:mb-8">
+        <section className="card p-6 mb-8">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 bg-leaf-100 rounded-soft">
               <Plus className="w-5 h-5 text-leaf-600" />
@@ -551,29 +553,27 @@ function KanbanBoard({
   const activeTasks = tasks.filter(t => !t.archivedAt)
 
   return (
-    <div className="kanban-scroll pb-4">
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 min-w-full md:min-w-0">
-        {WEEKDAYS.map(day => (
-          <KanbanColumn
-            key={day.key}
-            day={day}
-            tasks={activeTasks.filter(t => t.assignedDay === day.key)}
-            isToday={day.key === todayDay}
-            expandedTaskId={expandedTaskId}
-            onToggleExpand={onToggleExpand}
-            onDelete={onDelete}
-            onMarkDone={onMarkDone}
-            onMoveToNextDay={onMoveToNextDay}
-            onAddSubtask={onAddSubtask}
-            onDeleteSubtask={onDeleteSubtask}
-            onToggleSubtask={onToggleSubtask}
-            onUpdateStatus={onUpdateStatus}
-            onArchive={onArchive}
-            calcProgress={calcProgress}
-            showCompletedTasks={showCompletedTasks}
-          />
-        ))}
-      </div>
+    <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      {WEEKDAYS.map(day => (
+        <KanbanColumn
+          key={day.key}
+          day={day}
+          tasks={activeTasks.filter(t => t.assignedDay === day.key)}
+          isToday={day.key === todayDay}
+          expandedTaskId={expandedTaskId}
+          onToggleExpand={onToggleExpand}
+          onDelete={onDelete}
+          onMarkDone={onMarkDone}
+          onMoveToNextDay={onMoveToNextDay}
+          onAddSubtask={onAddSubtask}
+          onDeleteSubtask={onDeleteSubtask}
+          onToggleSubtask={onToggleSubtask}
+          onUpdateStatus={onUpdateStatus}
+          onArchive={onArchive}
+          calcProgress={calcProgress}
+          showCompletedTasks={showCompletedTasks}
+        />
+      ))}
     </div>
   )
 }
@@ -597,20 +597,19 @@ function KanbanColumn({
       ref={setNodeRef}
       className={`rounded-soft-lg border-2 ${
         isToday ? 'border-leaf-400 bg-leaf-50' : 'border-sand-300 bg-white'
-      } p-4 sm:p-6 min-h-[500px] sm:min-h-[700px] transition-all duration-200`}
+      } p-6 min-h-[700px] transition-all duration-200`}
     >
-      <div className="flex items-center justify-between mb-4 sm:mb-6">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className={`font-bold text-base sm:text-xl ${isToday ? 'text-leaf-600' : 'text-slate-900'}`}>
-            <span className="hidden sm:inline">{day.label}</span>
-            <span className="sm:hidden">{day.short}</span>
+          <h3 className={`font-bold text-xl ${isToday ? 'text-leaf-600' : 'text-slate-900'}`}>
+            {day.label}
           </h3>
           {isToday && (
             <span className="text-xs text-leaf-600 font-medium mt-1 inline-block">今日</span>
           )}
         </div>
         <div className="text-right">
-          <div className="text-xs sm:text-sm font-medium text-slate-600">
+          <div className="text-sm font-medium text-slate-600">
             {incompleteTasks.length} / {tasks.length}
           </div>
           {tasks.length > 0 && (
@@ -866,19 +865,19 @@ function KanbanCard({
           <div className="flex gap-2 pt-2">
             <button
               onClick={() => onMarkDone(task.id)}
-              className="flex-1 text-xs sm:text-sm px-2 sm:px-3 py-2 sm:py-1.5 bg-leaf-100 text-leaf-600 rounded hover:bg-leaf-200 font-medium min-h-[44px] sm:min-h-0"
+              className="flex-1 text-xs px-3 py-1.5 bg-leaf-100 text-leaf-600 rounded hover:bg-leaf-200 font-medium"
             >
               完了
             </button>
             <button
               onClick={() => onMoveToNextDay(task.id)}
-              className="flex-1 text-xs sm:text-sm px-2 sm:px-3 py-2 sm:py-1.5 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 font-medium min-h-[44px] sm:min-h-0"
+              className="flex-1 text-xs px-3 py-1.5 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 font-medium"
             >
               翌日へ
             </button>
             <button
               onClick={() => onDelete(task.id)}
-              className="text-xs sm:text-sm px-2 sm:px-3 py-2 sm:py-1.5 bg-red-50 text-red-600 rounded hover:bg-red-100 font-medium min-h-[44px] sm:min-h-0"
+              className="text-xs px-3 py-1.5 bg-red-50 text-red-600 rounded hover:bg-red-100 font-medium"
             >
               削除
             </button>
@@ -1106,12 +1105,12 @@ function TaskListCard({
 // 週次サマリーモーダル
 function WeeklySummaryModal({ stats, onClose }) {
   return (
-    <div className="fixed inset-0 bg-slate-900 bg-opacity-50 flex items-center justify-center p-3 sm:p-4 z-50">
-      <div className="card max-w-2xl w-full p-4 sm:p-8 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-start justify-between mb-4 sm:mb-6">
+    <div className="fixed inset-0 bg-slate-900 bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="card max-w-2xl w-full p-8">
+        <div className="flex items-start justify-between mb-6">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-1 sm:mb-2">週次サマリー</h2>
-            <p className="text-sm sm:text-base text-slate-600">今週のパフォーマンス</p>
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">週次サマリー</h2>
+            <p className="text-slate-600">今週のパフォーマンス</p>
           </div>
           <button onClick={onClose} className="icon-btn">
             <X className="w-5 h-5" />
@@ -1209,19 +1208,19 @@ function HistoryDrawer({ completedTasks, onClose, onArchive, calcProgress }) {
     <>
       <div className="drawer-overlay" onClick={onClose} />
       <div className="drawer">
-        <div className="sticky top-0 bg-white border-b border-sand-300 p-4 sm:p-6 z-10">
+        <div className="sticky top-0 bg-white border-b border-sand-300 p-6 z-10">
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900">今週の完了タスク</h2>
-            <button onClick={onClose} className="icon-btn p-2">
+            <h2 className="text-2xl font-bold text-slate-900">今週の完了タスク</h2>
+            <button onClick={onClose} className="icon-btn">
               <X className="w-5 h-5" />
             </button>
           </div>
-          <p className="text-xs sm:text-sm text-slate-600">
+          <p className="text-sm text-slate-600">
             {completedTasks.length}件のタスクを完了しました
           </p>
         </div>
 
-        <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
+        <div className="p-6 space-y-4">
           {completedTasks.length === 0 ? (
             <div className="text-center py-12">
               <CheckCircle2 className="w-12 h-12 mx-auto mb-4 text-slate-300" />
@@ -1315,19 +1314,19 @@ function ArchivedTasksDrawer({ archivedTasks, onClose, onRestore, onPermanentDel
     <>
       <div className="drawer-overlay" onClick={onClose} />
       <div className="drawer">
-        <div className="sticky top-0 bg-white border-b border-sand-300 p-4 sm:p-6 z-10">
+        <div className="sticky top-0 bg-white border-b border-sand-300 p-6 z-10">
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900">履歴</h2>
-            <button onClick={onClose} className="icon-btn p-2">
+            <h2 className="text-2xl font-bold text-slate-900">履歴</h2>
+            <button onClick={onClose} className="icon-btn">
               <X className="w-5 h-5" />
             </button>
           </div>
-          <p className="text-xs sm:text-sm text-slate-600">
+          <p className="text-sm text-slate-600">
             {archivedTasks.length}件のタスクを保管中
           </p>
         </div>
 
-        <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
+        <div className="p-6 space-y-4">
           {archivedTasks.length === 0 ? (
             <div className="text-center py-12">
               <Archive className="w-12 h-12 mx-auto mb-4 text-slate-300" />
@@ -1401,21 +1400,21 @@ function ArchivedTasksDrawer({ archivedTasks, onClose, onRestore, onPermanentDel
                       onClick={() => {
                         onRestore(task.id)
                       }}
-                      className="flex-1 text-xs sm:text-sm px-2 sm:px-3 py-2.5 sm:py-2 bg-leaf-100 text-leaf-600 rounded hover:bg-leaf-200 font-medium flex items-center justify-center gap-1 min-h-[44px] sm:min-h-0"
+                      className="flex-1 text-xs px-3 py-2 bg-leaf-100 text-leaf-600 rounded hover:bg-leaf-200 font-medium flex items-center justify-center gap-1"
                     >
-                      <CheckCircle2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <CheckCircle2 className="w-3 h-3" />
                       復元
                     </button>
                     <button
                       onClick={() => handlePermanentDelete(task.id)}
-                      className={`flex-1 text-xs sm:text-sm px-2 sm:px-3 py-2.5 sm:py-2 rounded font-medium flex items-center justify-center gap-1 transition-colors min-h-[44px] sm:min-h-0 ${
+                      className={`flex-1 text-xs px-3 py-2 rounded font-medium flex items-center justify-center gap-1 transition-colors ${
                         confirmDeleteId === task.id
                           ? 'bg-red-600 text-white hover:bg-red-700'
                           : 'bg-red-50 text-red-600 hover:bg-red-100'
                       }`}
                     >
-                      <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span className="truncate">{confirmDeleteId === task.id ? '本当に削除？' : '完全削除'}</span>
+                      <Trash2 className="w-3 h-3" />
+                      {confirmDeleteId === task.id ? '本当に削除？' : '完全削除'}
                     </button>
                   </div>
                 </div>
