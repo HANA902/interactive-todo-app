@@ -1,38 +1,348 @@
-:root {
-  font-family: 'Noto Sans JP', sans-serif;
-  line-height: 1.7;
-  font-weight: 400;
+@import "tailwindcss";
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@theme {
+  /* Nordic Natural Color Palette */
+  --color-sand-50: #FEFDFB;
+  --color-sand-100: #FAF7F2;
+  --color-sand-200: #F3EEE7;
+  --color-sand-300: #E8DFD6;
 
-  /* CSS変数でカラーパレットを管理 - 北欧ナチュラル */
-  --bg-base: #FAF7F2;
-  --container-bg: #FFFFFF;
-  --accent-green: #9BBF9E;
-  --accent-green-hover: #91B89C;
-  --accent-beige: #E7D8C9;
-  --status-not-started: #DCDAD6;
-  --status-in-progress: #A7C7A9;
-  --status-completed: #BFD8BD;
-  --text-primary: #3E3E3E;
-  --text-secondary: #6B6B6B;
-  --border-subtle: #E9E5DF;
-  --border-light: #E0E0E0;
-  --card-bg: #FFFFFF;
-  --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.05);
-  --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --color-leaf-100: #E8F3EA;
+  --color-leaf-200: #C9E4CE;
+  --color-leaf-300: #A9D5B0;
+  --color-leaf-400: #9BBF9E;
+  --color-leaf-500: #6FA17A;
+  --color-leaf-600: #5A8A65;
+
+  --color-slate-900: #3E3E3E;
+  --color-slate-600: #6B7280;
+  --color-slate-400: #9CA3AF;
+  --color-slate-200: #E5E7EB;
+
+  /* Custom Radius */
+  --radius-soft: 16px;
+  --radius-soft-lg: 20px;
+  --radius-soft-xl: 22px;
+
+  /* Custom Shadows - Unified to single soft shadow */
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  min-width: 320px;
-  min-height: 100vh;
+@layer base {
+  :root {
+    font-family: 'Noto Sans JP', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.7;
+    font-weight: 400;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-sand-100);
+    color: var(--color-slate-900);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
 }
 
-#root {
+/* Component Styles */
+.btn-primary {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-leaf-500);
+  color: white;
+  font-weight: 500;
+  border-radius: var(--radius-soft-lg);
+  box-shadow: var(--shadow-soft);
+  transition: all 0.2s ease-out;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-leaf-600);
+  box-shadow: var(--shadow-soft);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-secondary {
+  padding: 0.5rem 1rem;
+  background-color: white;
+  color: var(--color-slate-900);
+  font-weight: 500;
+  border-radius: var(--radius-soft);
+  border: 1px solid var(--color-sand-300);
+  transition: all 0.2s ease-out;
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-sand-200);
+}
+
+.btn-filter {
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius-soft);
+  font-weight: 500;
+  background-color: white;
+  color: var(--color-slate-600);
+  border: 1px solid var(--color-sand-300);
+  transition: all 0.2s;
+}
+
+.btn-filter:hover {
+  border-color: var(--color-leaf-400);
+  background-color: var(--color-sand-50);
+}
+
+.btn-filter.active {
+  background-color: var(--color-leaf-100);
+  color: var(--color-leaf-600);
+  border-color: var(--color-leaf-400);
+  box-shadow: var(--shadow-soft);
+}
+
+.card {
+  background-color: white;
+  border-radius: var(--radius-soft-lg);
+  border: 1px solid var(--color-sand-300);
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow 0.3s;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-soft);
+}
+
+.card-compact {
+  background-color: white;
+  border-radius: var(--radius-soft);
+  border: 1px solid var(--color-sand-200);
+  box-shadow: var(--shadow-soft);
+}
+
+.input-field {
   width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: white;
+  border: 1px solid var(--color-sand-300);
+  border-radius: var(--radius-soft);
+  color: var(--color-slate-900);
+  transition: all 0.2s;
+}
+
+.input-field::placeholder {
+  color: var(--color-slate-400);
+}
+
+.input-field:focus {
+  outline: none;
+  box-shadow: var(--shadow-soft);
+  border-color: var(--color-leaf-400);
+  ring: 2px;
+  ring-color: var(--color-leaf-400);
+}
+
+.textarea-field {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: white;
+  border: 1px solid var(--color-sand-300);
+  border-radius: var(--radius-soft);
+  color: var(--color-slate-900);
+  resize: none;
+  transition: all 0.2s;
+}
+
+.textarea-field::placeholder {
+  color: var(--color-slate-400);
+}
+
+.textarea-field:focus {
+  outline: none;
+  box-shadow: var(--shadow-soft);
+  border-color: var(--color-leaf-400);
+}
+
+.progress-container {
+  width: 100%;
+  height: 0.5rem;
+  background-color: var(--color-sand-200);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(to right, var(--color-leaf-400), var(--color-leaf-500));
+  transition: all 0.5s ease-out;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.badge-todo {
+  background-color: var(--color-slate-100);
+  color: var(--color-slate-600);
+}
+
+.badge-doing {
+  background-color: var(--color-leaf-100);
+  color: var(--color-leaf-600);
+}
+
+.badge-done {
+  background-color: var(--color-leaf-200);
+  color: var(--color-leaf-600);
+}
+
+.stat-card {
+  text-align: center;
+  padding: 1rem;
+  background-color: white;
+  border-radius: var(--radius-soft-lg);
+  border: 1px solid var(--color-sand-300);
+  transition: all 0.2s;
+}
+
+.stat-card:hover {
+  box-shadow: var(--shadow-soft);
+  border-color: var(--color-leaf-300);
+}
+
+.icon-btn {
+  padding: 0.5rem;
+  border-radius: var(--radius-soft);
+  color: var(--color-slate-600);
+  transition: all 0.2s;
+}
+
+.icon-btn:hover {
+  background-color: var(--color-sand-200);
+}
+
+.divider {
+  border-top: 1px solid var(--color-sand-300);
+}
+
+/* FAB (Floating Action Button) */
+.fab {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background-color: var(--color-leaf-500);
+  color: white;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+  z-index: 40;
+}
+
+.fab:hover {
+  background-color: var(--color-leaf-600);
+  transform: scale(1.05);
+}
+
+.fab:active {
+  transform: scale(0.95);
+}
+
+/* Side Drawer */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(62, 62, 62, 0.5);
+  z-index: 50;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.drawer {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 90%;
+  max-width: 28rem;
+  background-color: white;
+  box-shadow: var(--shadow-soft);
+  overflow-y: auto;
+  animation: slideInRight 0.3s ease-out;
+  z-index: 51;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+/* Mini Card for completed tasks */
+.mini-card {
+  min-height: 2.5rem;
+  max-height: 3.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--color-sand-50);
+  border: 1px solid var(--color-sand-200);
+  border-radius: var(--radius-soft);
+  transition: all 0.3s ease-out;
+}
+
+.mini-card:hover {
+  background-color: white;
+  box-shadow: var(--shadow-soft);
+}
+
+/* Progress bar with green fade at 100% */
+.progress-bar-complete {
+  height: 100%;
+  background: linear-gradient(to right, var(--color-leaf-500), var(--color-leaf-600));
+  transition: all 0.5s ease-out;
+}
+
+/* Subtask textarea with better spacing */
+.subtask-textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background-color: white;
+  border: 1px solid var(--color-sand-300);
+  border-radius: var(--radius-soft);
+  color: var(--color-slate-900);
+  resize: none;
+  line-height: 1.6;
+  min-height: 2.5rem;
+  transition: all 0.2s;
+}
+
+.subtask-textarea::placeholder {
+  color: var(--color-slate-400);
+}
+
+.subtask-textarea:focus {
+  outline: none;
+  box-shadow: var(--shadow-soft);
+  border-color: var(--color-leaf-400);
 }
