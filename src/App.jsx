@@ -494,6 +494,7 @@ function App() {
               onToggleSubtask={toggleSubtask}
               onUpdateStatus={updateTaskStatus}
               onArchive={archiveTask}
+              onUpdateTask={updateTask}
               calcProgress={calcProgress}
               todayDay={todayDay}
               showCompletedTasks={showCompletedTasks}
@@ -570,7 +571,7 @@ function App() {
 // カンバンボードコンポーネント
 function KanbanBoard({
   tasks, expandedTaskId, onToggleExpand, onDelete, onMarkDone, onMoveToNextDay,
-  onAddSubtask, onDeleteSubtask, onToggleSubtask, onUpdateStatus, onArchive, calcProgress, todayDay, showCompletedTasks
+  onAddSubtask, onDeleteSubtask, onToggleSubtask, onUpdateStatus, onArchive, onUpdateTask, calcProgress, todayDay, showCompletedTasks
 }) {
   // アーカイブされていないタスクのみを表示
   const activeTasks = tasks.filter(t => !t.archivedAt)
