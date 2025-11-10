@@ -6,8 +6,9 @@ import { CSS } from '@dnd-kit/utilities'
 import {
   Plus, Trash2, ChevronDown, ChevronRight, CheckCircle2, Circle,
   Calendar, Target, Check, Tag, BarChart3, TrendingUp, X, GripVertical,
-  Eye, EyeOff, Clock, MoreVertical, Archive
+  Eye, EyeOff, Clock, MoreVertical, Archive, HelpCircle, Edit2, Save, XCircle
 } from 'lucide-react'
+import HowToUse from './HowToUse'
 
 // 曜日定義
 const WEEKDAYS = [
@@ -31,6 +32,7 @@ function App() {
   const [showCompletedTasks, setShowCompletedTasks] = useState(true)
   const [showHistoryDrawer, setShowHistoryDrawer] = useState(false)
   const [showArchivedDrawer, setShowArchivedDrawer] = useState(false)
+  const [showHowToUse, setShowHowToUse] = useState(false)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -137,6 +139,16 @@ function App() {
       setNewTaskDueDate('')
       setNewTaskTags('')
     }
+  }
+
+  // タスク編集
+  const updateTask = (taskId, updates) => {
+    const now = new Date().toISOString()
+    setTasks(tasks.map(task =>
+      task.id === taskId
+        ? { ...task, ...updates, updatedAt: now }
+        : task
+    ))
   }
 
   // タスク削除
@@ -338,6 +350,14 @@ function App() {
             </div>
             <div className="flex items-center gap-2 sm:gap-3 ml-2 mr-20 sm:mr-28 md:mr-36">
               <button
+                onClick={() => setShowHowToUse(true)}
+                className="btn-secondary flex items-center gap-1 sm:gap-2 p-2 sm:px-3 sm:py-2"
+                title="使い方ガイド"
+              >
+                <HelpCircle className="w-4 h-4" />
+                <span className="hide-on-mobile">使い方</span>
+              </button>
+              <button
                 onClick={() => setShowCompletedTasks(!showCompletedTasks)}
                 className="btn-secondary flex items-center gap-1 sm:gap-2 p-2 sm:px-3 sm:py-2"
                 title={showCompletedTasks ? '完了タスク表示' : '完了タスク非表示'}
@@ -538,6 +558,11 @@ function App() {
           calcProgress={calcProgress}
         />
       )}
+
+      {/* 使い方ガイド */}
+      {showHowToUse && (
+        <HowToUse onClose={() => setShowHowToUse(false)} />
+      )}
     </div>
   )
 }
@@ -569,6 +594,7 @@ function KanbanBoard({
             onToggleSubtask={onToggleSubtask}
             onUpdateStatus={onUpdateStatus}
             onArchive={onArchive}
+            onUpdateTask={updateTask}
             calcProgress={calcProgress}
             showCompletedTasks={showCompletedTasks}
           />
@@ -581,7 +607,7 @@ function KanbanBoard({
 // カンバン列コンポーネント
 function KanbanColumn({
   day, tasks, isToday, expandedTaskId, onToggleExpand, onDelete, onMarkDone,
-  onMoveToNextDay, onAddSubtask, onDeleteSubtask, onToggleSubtask, onUpdateStatus, onArchive, calcProgress, showCompletedTasks
+  onMoveToNextDay, onAddSubtask, onDeleteSubtask, onToggleSubtask, onUpdateStatus, onArchive, onUpdateTask, calcProgress, showCompletedTasks
 }) {
   const incompleteTasks = tasks.filter(t => t.status !== 'done')
   const completedTasks = tasks.filter(t => t.status === 'done')
@@ -637,6 +663,7 @@ function KanbanColumn({
               onToggleSubtask={onToggleSubtask}
               onUpdateStatus={onUpdateStatus}
               onArchive={onArchive}
+              onUpdateTask={onUpdateTask}
               calcProgress={calcProgress}
             />
           ))}
@@ -689,11 +716,16 @@ function DraggableKanbanCard({ task, ...props }) {
 // カンバンカードコンポーネント
 function KanbanCard({
   task, isExpanded, onToggleExpand, onDelete, onMarkDone, onMoveToNextDay,
-  onAddSubtask, onDeleteSubtask, onToggleSubtask, onUpdateStatus, onArchive, calcProgress, dragHandleProps
+  onAddSubtask, onDeleteSubtask, onToggleSubtask, onUpdateStatus, onArchive, onUpdateTask, calcProgress, dragHandleProps
 }) {
   const [swipeState, setSwipeState] = useState(null)
   const [newSubtaskTitle, setNewSubtaskTitle] = useState('')
   const [showMenu, setShowMenu] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editTitle, setEditTitle] = useState(task.title)
+  const [editDescription, setEditDescription] = useState(task.description)
+  const [editDueDate, setEditDueDate] = useState(task.dueDate || '')
+  const [editTags, setEditTags] = useState(task.tags.join(', '))
 
   const handlers = useSwipeable({
     onSwipedRight: () => {
@@ -730,6 +762,27 @@ function KanbanCard({
       e.preventDefault()
       handleAddSubtask()
     }
+  }
+
+  const handleSaveEdit = () => {
+    if (editTitle.trim()) {
+      const tags = editTags.split(',').map(t => t.trim()).filter(t => t)
+      onUpdateTask(task.id, {
+        title: editTitle.trim(),
+        description: editDescription.trim(),
+        dueDate: editDueDate || null,
+        tags: tags
+      })
+      setIsEditing(false)
+    }
+  }
+
+  const handleCancelEdit = () => {
+    setEditTitle(task.title)
+    setEditDescription(task.description)
+    setEditDueDate(task.dueDate || '')
+    setEditTags(task.tags.join(', '))
+    setIsEditing(false)
   }
 
   return (
@@ -792,6 +845,16 @@ function KanbanCard({
             <div className="absolute right-0 top-full mt-1 bg-white border border-sand-300 rounded-soft shadow-soft z-10 min-w-[140px]">
               <button
                 onClick={() => {
+                  setIsEditing(true)
+                  setShowMenu(false)
+                }}
+                className="w-full px-3 py-2 text-left text-sm text-slate-700 hover:bg-sand-100 flex items-center gap-2"
+              >
+                <Edit2 className="w-4 h-4" />
+                編集
+              </button>
+              <button
+                onClick={() => {
                   onArchive(task.id)
                   setShowMenu(false)
                 }}
@@ -808,7 +871,67 @@ function KanbanCard({
       {/* 展開エリア */}
       {isExpanded && (
         <div className="mt-4 pt-4 border-t border-sand-300 space-y-3" onClick={(e) => e.stopPropagation()}>
-          {task.description && (
+          {/* 編集モード */}
+          {isEditing && (
+            <div className="bg-sand-50 p-3 rounded-soft space-y-3">
+              <div>
+                <label className="block text-xs font-semibold text-slate-900 mb-1">タスク名</label>
+                <input
+                  type="text"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  className="input-field text-sm"
+                  placeholder="タスク名"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-900 mb-1">説明</label>
+                <textarea
+                  value={editDescription}
+                  onChange={(e) => setEditDescription(e.target.value)}
+                  className="textarea-field text-sm h-16"
+                  placeholder="詳細説明"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-900 mb-1">タグ</label>
+                <input
+                  type="text"
+                  value={editTags}
+                  onChange={(e) => setEditTags(e.target.value)}
+                  className="input-field text-sm"
+                  placeholder="デザイン, 開発, レビュー"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-900 mb-1">期日</label>
+                <input
+                  type="date"
+                  value={editDueDate}
+                  onChange={(e) => setEditDueDate(e.target.value)}
+                  className="input-field text-sm"
+                />
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleSaveEdit}
+                  className="flex-1 text-xs sm:text-sm px-2 sm:px-3 py-2 bg-leaf-500 text-white rounded hover:bg-leaf-600 font-medium flex items-center justify-center gap-1"
+                >
+                  <Save className="w-3 h-3" />
+                  保存
+                </button>
+                <button
+                  onClick={handleCancelEdit}
+                  className="flex-1 text-xs sm:text-sm px-2 sm:px-3 py-2 bg-slate-200 text-slate-700 rounded hover:bg-slate-300 font-medium flex items-center justify-center gap-1"
+                >
+                  <XCircle className="w-3 h-3" />
+                  キャンセル
+                </button>
+              </div>
+            </div>
+          )}
+
+          {!isEditing && task.description && (
             <p className="text-xs text-slate-600 leading-relaxed">{task.description}</p>
           )}
 
